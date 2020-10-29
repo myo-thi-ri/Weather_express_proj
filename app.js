@@ -5,7 +5,7 @@ const app = express();
 require('dotenv').config();
 
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static("public"));
+app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 
 app.get('/',function(req,res){
@@ -24,7 +24,7 @@ app.post('/', function (req, res) {
         response.on('data',function(data){
             //console.log(data);
             const weatherdata = JSON.parse(data);
-            console.log(weatherdata);
+            //console.log(weatherdata);
             const name = weatherdata.name;
             const temp = weatherdata.main.temp;
             const description = weatherdata.weather[0].main;
