@@ -19,23 +19,30 @@ app.post('/', function (req, res) {
     const url = "https://api.openweathermap.org/data/2.5/weather?q="+ query +"&appid="+ apiKey +"&units=imperial"
     
     https.get(url,function(response){
-        console.log(response.statusCode);
+        if(response.statusCode == 404){
+           console.log("Data not found.");
+           res.render('invalidValue');
+        }else{
+            response.on('data',function(data){
+                //console.log(data);
+                const weatherdata = JSON.parse(data);
+                //console.log(weatherdata);
+                const name = weatherdata.name;
+                const temp = weatherdata.main.temp;
+                const description = weatherdata.weather[0].main;
+                const icon = weatherdata.weather[0].icon;
+                const mintemp = weatherdata.main.temp_min;
+                const maxtemp = weatherdata.main.temp_max;
+                const imageurl = "http://openweathermap.org/img/wn/"+ icon +"@2x.png"
+                //console.log(temp,description)
+                res.render('weather',{name: name,temp: temp,description: description,mintemp: mintemp, maxtemp: maxtemp,imageurl: imageurl});
+                
+            });
 
-        response.on('data',function(data){
-            //console.log(data);
-            const weatherdata = JSON.parse(data);
-            //console.log(weatherdata);
-            const name = weatherdata.name;
-            const temp = weatherdata.main.temp;
-            const description = weatherdata.weather[0].main;
-            const icon = weatherdata.weather[0].icon;
-            const mintemp = weatherdata.main.temp_min;
-            const maxtemp = weatherdata.main.temp_max;
-            const imageurl = "http://openweathermap.org/img/wn/"+ icon +"@2x.png"
-            //console.log(temp,description)
-            res.render('weather',{name: name,temp: temp,description: description,mintemp: mintemp, maxtemp: maxtemp,imageurl: imageurl});
-            
-        });
+        };
+        
+
+        
     });
     //res.send('Server is up and running.')
 });
